@@ -14,13 +14,87 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      pdf_chunks: {
+        Row: {
+          chunk_index: number
+          content: string
+          created_at: string
+          document_id: string
+          embedding: string
+          id: string
+          page: number | null
+        }
+        Insert: {
+          chunk_index: number
+          content: string
+          created_at?: string
+          document_id: string
+          embedding: string
+          id?: string
+          page?: number | null
+        }
+        Update: {
+          chunk_index?: number
+          content?: string
+          created_at?: string
+          document_id?: string
+          embedding?: string
+          id?: string
+          page?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pdf_chunks_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "pdf_documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pdf_documents: {
+        Row: {
+          chunk_count: number
+          created_at: string
+          id: string
+          page_count: number
+          title: string
+        }
+        Insert: {
+          chunk_count?: number
+          created_at?: string
+          id?: string
+          page_count?: number
+          title: string
+        }
+        Update: {
+          chunk_count?: number
+          created_at?: string
+          id?: string
+          page_count?: number
+          title?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      match_pdf_chunks: {
+        Args: {
+          match_count?: number
+          p_document_id: string
+          query_embedding: string
+        }
+        Returns: {
+          chunk_index: number
+          content: string
+          id: string
+          page: number
+          similarity: number
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
