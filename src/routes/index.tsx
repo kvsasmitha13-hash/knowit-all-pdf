@@ -153,11 +153,7 @@ function Index() {
             if (file) void handleFile(file);
           }}
         />
-
-        {busy && doc === null && status ? null : null}
       </section>
-
-      {busy && status && doc === null ? null : null}
 
       {error ? (
         <p className="mt-4 rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
