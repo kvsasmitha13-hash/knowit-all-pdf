@@ -36,8 +36,24 @@ export async function extractPdf(
   const workerUrl = (await import("pdfjs-dist/build/pdf.worker.min.mjs?url")).default;
   pdfjs.GlobalWorkerOptions.workerSrc = workerUrl;
 
-  const data = new Uint8Array(await file.arrayBuffer());
-  const pdf = await pdfjs.getDocument({ data }).promise;
+  const buffer = await file.arrayBuffer();
+  const data = new Uint8Array(buffer);
+  if (data.byteLength === 0) {
+    throw new Error("That file came through empty. Try choosing it again.");
+  }
+  const header = String.fromCharCode(...data.slice(0, 5));
+  if (!header.startsWith("%PDF")) {
+    throw new Error("That file doesn't look like a PDF. Please choose a .pdf file.");
+  }
+
+  let pdf;
+  try {
+    pdf = await pdfjs.getDocument({ data, isEvalSupported: false }).promise;
+  } catch {
+    throw new Error(
+      "This PDF couldn't be opened — it may be damaged or password protected. Try re-saving or exporting it again.",
+    );
+  }
 
   const chunks: PdfChunk[] = [];
   for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {

@@ -148,9 +148,12 @@ function Index() {
           accept="application/pdf"
           className="hidden"
           onChange={(event) => {
-            const file = event.target.files?.[0];
-            event.target.value = "";
-            if (file) void handleFile(file);
+            const input = event.target;
+            const file = input.files?.[0];
+            if (!file) return;
+            void handleFile(file).finally(() => {
+              input.value = "";
+            });
           }}
         />
       </section>
